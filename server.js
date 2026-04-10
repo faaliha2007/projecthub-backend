@@ -1,5 +1,4 @@
 const express = require("express");
-
 const cors = require("cors");
 const multer = require("multer");
 
@@ -9,11 +8,6 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-/* 📦 MongoDB */
-/*mongoose.connect("mongodb://127.0.0.1:27017/peerhub")
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
-*/
 /* 📁 Multer setup */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads"),
@@ -23,20 +17,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/* 🧾 Schema */
-const Profile = mongoose.model("Profile", {
-  name: String,
-  bio: String,
-  pic: String,
-});
+/* 🧠 In-memory storage */
+let profile = null;
 
 /* 📌 POST profile */
-app.post("/profile", upload.single("pic"), async (req, res) => {
-  let profile = await Profile.findOne();
-
-  if (!profile) {
-    profile = new Profile();
-  }
+app.post("/profile", upload.single("pic"), (req, res) => {
+  if (!profile) profile = {};
 
   profile.name = req.body.name || profile.name;
   profile.bio = req.body.bio || profile.bio;
@@ -45,16 +31,14 @@ app.post("/profile", upload.single("pic"), async (req, res) => {
     profile.pic = req.file.filename;
   }
 
-  await profile.save();
-
   res.json(profile);
 });
 
 /* 📌 GET profile */
-app.get("/profile", async (req, res) => {
-  const profile = await Profile.findOne();
+app.get("/profile", (req, res) => {
   res.json(profile);
 });
 
 /* 🚀 Start server */
-app.listen(5000, () => console.log("Server running on port 5000"));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log("Server running on port " + PORT));
