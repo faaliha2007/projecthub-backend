@@ -1,5 +1,5 @@
 const express = require("express");
-const mongoose = require("mongoose");
+
 const cors = require("cors");
 const multer = require("multer");
 
@@ -10,10 +10,10 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 /* 📦 MongoDB */
-mongoose.connect("mongodb://127.0.0.1:27017/peerhub")
+/*mongoose.connect("mongodb://127.0.0.1:27017/peerhub")
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
-
+*/
 /* 📁 Multer setup */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads"),
